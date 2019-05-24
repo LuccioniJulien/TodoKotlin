@@ -9,5 +9,7 @@ data class Todo(
     @Json(name = "content")
     val content: String,
     @Json(name = "project_id")
-    val project_id: Long
+    val project_id: Long,
+    @Json(name = "completed")
+    var completed: Boolean
 )

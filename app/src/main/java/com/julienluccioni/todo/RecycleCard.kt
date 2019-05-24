@@ -31,11 +31,12 @@ class CustomAdapter(
         fun bind(task: Todo, update: (pos: Int, isChecked: Boolean) -> Unit, delete: (pos: Int) -> Unit) {
             btnDelete.setOnClickListener { delete(adapterPosition) }
             chkTask.apply {
-                isChecked = false
-                paintFlags = 0
+                isChecked = task.completed
+                paintFlags = if (isChecked) Paint.STRIKE_THRU_TEXT_FLAG else 0
                 text = task.content
                 setOnClickListener {
                     paintFlags = if (isChecked) Paint.STRIKE_THRU_TEXT_FLAG else 0
+                    task.completed = isChecked
                     update(adapterPosition, isChecked)
                 }
             }

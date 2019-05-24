@@ -38,7 +38,7 @@ class TodoViewModel : ViewModel() {
     fun onCreate(content: String, callback: (Int) -> Unit) {
         coroutineScope.launch {
             try {
-                val newTodo = Todo(id = 0, content = content, project_id = projectId)
+                val newTodo = Todo(id = 0, content = content, project_id = projectId, completed = false)
                 val todo: Todo = TodoApi.TodoService.addTask(newTodo).await()
                 myTasks.add(todo)
                 callback(myTasks.size - 1)
