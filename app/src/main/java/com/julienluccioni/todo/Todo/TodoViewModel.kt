@@ -35,38 +35,41 @@ class TodoViewModel : ViewModel() {
         Log.i("MyDebug", "InitViewModel")
     }
 
-    fun onCreate(content: String, callback: (Int) -> Unit) {
+    fun onCreate(content: String, sucess: (Int) -> Unit, fail: (String) -> Unit) {
         coroutineScope.launch {
             try {
                 val newTodo = Todo(id = 0, content = content, project_id = projectId, completed = false)
                 val todo: Todo = TodoApi.TodoService.addTask(newTodo).await()
                 myTasks.add(todo)
-                callback(myTasks.size - 1)
+                sucess(myTasks.size - 1)
             } catch (e: Exception) {
+                fail("Create Fail")
                 Log.i("MyDebug", e.message)
             }
         }
     }
 
-    fun onDelete(pos: Int, success: (Int, Int) -> Unit) {
+    fun onDelete(pos: Int, success: (Int, Int) -> Unit, fail: (String) -> Unit) {
         coroutineScope.launch {
             try {
                 TodoApi.TodoService.deleteTask(myTasks[pos].id.toString()).await()
                 myTasks.removeAt(pos)
                 success(pos, myTasks.size)
             } catch (e: Exception) {
+                fail("Delete fail")
                 Log.i("MyDebug", e.message)
             }
         }
     }
 
-    fun onDeleteAll(success: (Int) -> Unit) {
+    fun onDeleteAll(success: (Int) -> Unit, fail: (String) -> Unit) {
         coroutineScope.launch {
             val count = myTasks.size
             myTasks.forEach {
                 try {
                     TodoApi.TodoService.deleteTask(it.id.toString()).await()
                 } catch (e: Exception) {
+                    fail("""Task ${it.id} was not deleted""")
                     Log.i("MyDebug", e.message)
                 }
             }
@@ -76,7 +79,7 @@ class TodoViewModel : ViewModel() {
 
     }
 
-    fun onUpdate(pos: Int, isChecked: Boolean) {
+    fun onUpdate(pos: Int, isChecked: Boolean, fail: (String) -> Unit) {
         coroutineScope.launch {
             try {
                 if (isChecked) {
@@ -85,6 +88,7 @@ class TodoViewModel : ViewModel() {
                     TodoApi.TodoService.reopenTask(myTasks[pos].id.toString()).await()
                 }
             } catch (e: Exception) {
+                fail("Update fail")
                 Log.i("MyDebug", e.message)
             }
 

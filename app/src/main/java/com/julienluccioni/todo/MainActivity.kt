@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun create(task: String?) {
         if (task == "" || task == null) return
-        todoViewModel.onCreate(task) {
+        todoViewModel.onCreate(task, {
             runOnUiThread {
                 recycle.adapter?.notifyItemInserted(it)
                 Snackbar.make(
@@ -59,23 +59,29 @@ class MainActivity : AppCompatActivity() {
                     Snackbar.LENGTH_LONG
                 ).show()
             }
-        }
+        }) { makeSnack(it) }
     }
 
     private fun update(pos: Int, isChecked: Boolean) {
-        todoViewModel.onUpdate(pos, isChecked)
+        todoViewModel.onUpdate(pos, isChecked) { makeSnack(it) }
     }
 
     private fun delete(pos: Int) {
-        todoViewModel.onDelete(pos) { position: Int, size: Int ->
+        todoViewModel.onDelete(pos, { position: Int, size: Int ->
             runOnUiThread {
                 recycle.adapter?.notifyItemRemoved(position)
-                Snackbar.make(
-                    layout_content,
-                    "Task removed",
-                    Snackbar.LENGTH_LONG
-                ).show()
+                makeSnack("Task removed")
             }
+        }) { makeSnack(it) }
+    }
+
+    private fun makeSnack(message: String) {
+        runOnUiThread {
+            Snackbar.make(
+                layout_content,
+                message,
+                Snackbar.LENGTH_LONG
+            ).show()
         }
     }
 
@@ -100,7 +106,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.action_delete_all -> {
-                todoViewModel.onDeleteAll {
+                todoViewModel.onDeleteAll({
                     runOnUiThread {
                         recycle.adapter?.notifyItemRangeRemoved(0, it)
                         Snackbar.make(
@@ -109,7 +115,7 @@ class MainActivity : AppCompatActivity() {
                             Snackbar.LENGTH_LONG
                         ).show()
                     }
-                }
+                }) { makeSnack(it) }
                 true
             }
             R.id.action_refresh -> {
