@@ -49,18 +49,3 @@ interface TodoApiService {
 object TodoApi {
     val TodoService: TodoApiService by lazy { retrofit.create(TodoApiService::class.java) }
 }
-
-object UnitConverterFactory : Converter.Factory() {
-    override fun responseBodyConverter(
-        type: Type, annotations: Array<out Annotation>,
-        retrofit: Retrofit
-    ): Converter<ResponseBody, *>? {
-        return if (type == Unit::class.java) UnitConverter else null
-    }
-
-    private object UnitConverter : Converter<ResponseBody, Unit> {
-        override fun convert(value: ResponseBody) {
-            value.close()
-        }
-    }
-}

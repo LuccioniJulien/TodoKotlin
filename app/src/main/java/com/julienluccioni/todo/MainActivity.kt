@@ -115,13 +115,9 @@ class MainActivity : AppCompatActivity() {
             R.id.action_refresh -> {
                 todoViewModel.init({
                     runOnUiThread {
-                        recycle.adapter?.notifyItemRangeInserted(0, it)
+                        recycle.adapter?.notifyDataSetChanged()
                     }
-                }, true) {
-                    runOnUiThread {
-                        recycle.adapter?.notifyItemRangeRemoved(0, it)
-                    }
-                }
+                }, true)
                 true
             }
             else -> super.onOptionsItemSelected(item)

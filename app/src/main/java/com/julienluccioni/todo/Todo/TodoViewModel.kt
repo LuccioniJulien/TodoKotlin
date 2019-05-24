@@ -16,8 +16,7 @@ class TodoViewModel : ViewModel() {
 
     fun init(
         initList: (lastIndex: Int) -> Unit,
-        isRefresh: Boolean = false,
-        remove: ((lastIndex: Int) -> Unit)? = null
+        isRefresh: Boolean = false
     ) {
         if (!isLoadingFirstTime && !isRefresh) {
             return
@@ -26,10 +25,7 @@ class TodoViewModel : ViewModel() {
         coroutineScope.launch {
             try {
                 val allTasks = TodoApi.TodoService.getTasks(projectId).await()
-                val previousSize = myTasks.size
                 myTasks.clear()
-                if (remove != null)
-                    remove(previousSize)
                 myTasks.addAll(allTasks)
                 initList(myTasks.size)
             } catch (e: Exception) {
