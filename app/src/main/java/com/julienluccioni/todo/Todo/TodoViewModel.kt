@@ -14,7 +14,7 @@ class TodoViewModel : ViewModel() {
     private val coroutineScope = CoroutineScope(viewModelJob)
     val projectId = 2210926529
 
-    fun init(init: (lastIndex: Int) -> Unit, isRefresh: Boolean = false, remove: ((lastIndex: Int) -> Unit)? = null) {
+    fun init(initList: (lastIndex: Int) -> Unit, isRefresh: Boolean = false, remove: ((lastIndex: Int) -> Unit)? = null) {
         if (!isLoadingFirstTime && !isRefresh) {
             return
         }
@@ -26,7 +26,7 @@ class TodoViewModel : ViewModel() {
                 myTasks.clear()
                 remove?.invoke(previousSize)
                 myTasks.addAll(allTasks)
-                init(myTasks.size)
+                initList(myTasks.size)
             } catch (e: Exception) {
                 Log.i("MyDebug", e.message)
             }
