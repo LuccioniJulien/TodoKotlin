@@ -97,15 +97,12 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_settings -> {
-
                 true
             }
             R.id.action_delete_all -> {
-                todoViewModel.onDeleteAll { position: Int ->
+                todoViewModel.onDeleteAll {
                     runOnUiThread {
-                        for (index in 0..position) {
-                            recycle.adapter?.notifyItemRemoved(index)
-                        }
+                        recycle.adapter?.notifyItemRangeRemoved(0, it)
                         Snackbar.make(
                             layout_content,
                             "Task removed",
